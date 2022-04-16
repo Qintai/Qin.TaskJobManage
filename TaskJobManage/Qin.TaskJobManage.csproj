@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+		<Nullable>enable</Nullable>
+		<Version>1.0.6.1</Version>
+		<Authors>Qin</Authors>
+		<PackageId>Qin.TaskJobManage</PackageId>
+		<Company></Company>
+		<PackageIcon>Qin.TaskJobManage_img.jpg</PackageIcon>
+		<Description>基于Quartz的封装，提供UI管理界面(不兼容net framework)</Description>
+		<PackageProjectUrl>https://www.cnblogs.com/Qintai/p/15738336.html</PackageProjectUrl>
+		<RepositoryUrl></RepositoryUrl>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageReleaseNotes>修复大小写问题</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="view\TaskJobUI-static\*">
+			<pack>true</pack>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Qin.TaskJobManage_img.jpg">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="view\index.html" />
+		<EmbeddedResource Include="view\TaskJobUI-static\css\app.css" />
+		<EmbeddedResource Include="view\TaskJobUI-static\fonts\element-icons.535877f.woff" />
+		<EmbeddedResource Include="view\TaskJobUI-static\fonts\element-icons.732389d.ttf" />
+		<EmbeddedResource Include="view\TaskJobUI-static\js\app.js" />
+		<EmbeddedResource Include="view\TaskJobUI-static\js\manifest.js" />
+		<EmbeddedResource Include="view\TaskJobUI-static\js\vendor.js" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+		<PackageReference Include="Quartz" Version="3.3.3" />
+	</ItemGroup>
+
+</Project>
