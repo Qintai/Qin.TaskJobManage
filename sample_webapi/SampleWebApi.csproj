@@ -15,10 +15,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\TaskJobManage\Qin.TaskJobManage.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!--<PackageReference Include="Quartz.Extensions.Hosting" Version="3.3.3" />-->
+	  <PackageReference Include="Qin.TaskJobManage" Version="1.0.6.2" />
 	</ItemGroup>
 </Project>
