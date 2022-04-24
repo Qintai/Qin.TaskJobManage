@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
 
 namespace Qin.TaskJobManage
@@ -14,16 +15,14 @@ namespace Qin.TaskJobManage
     internal class TaskJobMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ISchedulerFactory _schedulerFactory;
         private readonly IServiceProvider _serviceProvider;
         private readonly TaskJobConfig _taskJonConfig;
 
-        public TaskJobMiddleware(RequestDelegate next, ISchedulerFactory schedulerFactory, IServiceProvider serviceProvider, TaskJobConfig taskJonConfig)
+        public TaskJobMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
         {
             _next = next;
-            _schedulerFactory = schedulerFactory;
             _serviceProvider = serviceProvider;
-            _taskJonConfig = taskJonConfig;
+            _taskJonConfig = serviceProvider.GetRequiredService<TaskJobConfig>();
         }
 
         private async Task<string> GetParms(HttpContext httpContext)
@@ -77,15 +76,19 @@ namespace Qin.TaskJobManage
                 return;
             }
 
-            if (httpContext.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && httpContext.Request.Path.Value.Contains("TaskJob-"))
+            if (httpContext.Request.Headers.TryGetValue("taskjob", out _))
+            {
+                if (httpContext.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && httpContext.Request.Path.Value.Contains("TaskJob-"))
                 {
-                var hander = new TaskJobManageHander(_serviceProvider);
-                string inputjson = await GetParms(httpContext);
-                var handerresult = await hander.ExecHander(httpContext.Request.Path, inputjson);
-                await WriteAsync(httpContext, handerresult);
-                return;
+                    var hander = new TaskJobManageHander(_serviceProvider);
+                    string inputjson = await GetParms(httpContext);
+                    var handerresult = await hander.ExecHander(httpContext.Request.Path, inputjson);
+                    await WriteAsync(httpContext, handerresult);
+                    return;
+                }
+                else await _next(httpContext);
             }
-            else  await _next(httpContext);
+            else await _next(httpContext);
         }
 
         private async Task WriteAsync(HttpContext httpContext, object obj, string contentType = "application/json")
