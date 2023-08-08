@@ -27,6 +27,10 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: '/table',
     component: () => import('../components/MyTable.vue')
+  },
+  {
+    path: '/detail',
+    component: () => import('../components/detail.vue')
   }
 ];
 

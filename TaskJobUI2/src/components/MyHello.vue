@@ -1,46 +1,63 @@
 <script lang="ts">
-    import { ref, defineComponent } from 'vue';
-    import { ElButton } from 'element-plus'
+import { ref, defineComponent, onMounted } from 'vue';
+import { ElButton } from 'element-plus'
+import { useRouter } from 'vue-router';
 
-    const value3 = ref('')
-    const defaultTime = ref<[Date, Date]>([
-      new Date(2000, 1, 1, 0, 0, 0),
-      new Date(2000, 2, 1, 23, 59, 59),
-    ]);
+const value3 = ref('')
+const defaultTime = ref<[Date, Date]>([
+  new Date(2000, 1, 1, 0, 0, 0),
+  new Date(2000, 2, 1, 23, 59, 59),
+]);
 
-    const size1 = ref<'default' | 'large' | 'small'>('default')
+const size1 = ref<'default' | 'large' | 'small'>('default')
 
-    const value1 = ref('')
-    const value2 = ref('')
+const value1 = ref('')
+const value2 = ref('')
 
-    const shortcuts = [
-      {
-        text: 'Today',
-        value: new Date(),
-      },
-      {
-        text: 'Yesterday',
-        value: () => {
-          const date = new Date()
-          date.setTime(date.getTime() - 3600 * 1000 * 24)
-          return date
-        },
-      },
-      {
-        text: 'A week ago',
-        value: () => {
-          const date = new Date()
-          date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-          return date
-        },
-      },
-    ]
 
-    const disabledDate = (time: Date) => {
-      return time.getTime() > Date.now()
-    }
+const router = useRouter();
 
-    const tableData = [
+console.info('3333333333');
+
+//query
+// console.info(router.query.userId);
+ 
+//params
+// console.info(router.params.userId);
+
+onMounted(() => {
+  console.info('参数如下');
+  console.info(router.query.userId);
+});
+
+const shortcuts = [
+  {
+    text: 'Today',
+    value: new Date(),
+  },
+  {
+    text: 'Yesterday',
+    value: () => {
+      const date = new Date()
+      date.setTime(date.getTime() - 3600 * 1000 * 24)
+      return date
+    },
+  },
+  {
+    text: 'A week ago',
+    value: () => {
+      const date = new Date()
+      date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+      return date
+    },
+  },
+]
+
+const disabledDate = (time: Date) => {
+  return time.getTime() > Date.now()
+}
+
+const tableData = [
   {
     date: '2016-05-03',
     name: 'Tom',
@@ -63,14 +80,14 @@
   },
 ]
 
-    export default defineComponent({
-      components: {
-      },
-      setup() {
-       return {
-         zIndex: 3000,
-         size: 'small',
-         tableData
+export default defineComponent({
+  components: {
+  },
+  setup() {
+    return {
+      zIndex: 3000,
+      size: 'small',
+      tableData
     }
   },
 });
@@ -78,13 +95,13 @@
 </script>
 
 <template>
-    <el-table :data="tableData" style="width: 100%">
+  <el-table :data="tableData" style="width: 100%">
     <el-table-column prop="date" label="Date" width="180" />
     <el-table-column prop="name" label="Name" width="180" />
     <el-table-column prop="address" label="Address" />
   </el-table>
   ---------------------
-    <el-card class="box-card">
+  <el-card class="box-card">
     <template #header>
       <div class="card-header">
         <span>Card name</span>
