@@ -1,5 +1,21 @@
 # vue-vite-h5
 
+路由传参数的坑： https://www.cnblogs.com/liao-yi/articles/17028269.html
+
+生命周期函数:https://www.cnblogs.com/huangchengpei/archive/2023/04/22/17344225.html
+
+与 2.x 版本生命周期相对应的组合式 API
+~~beforeCreate~~ -> 使用 setup()
+~~created~~ -> 使用 setup()
+beforeMount -> onBeforeMount
+mounted -> onMounted
+beforeUpdate -> onBeforeUpdate
+updated -> onUpdated
+beforeDestroy -> onBeforeUnmount
+destroyed -> onUnmounted
+errorCaptured -> onErrorCaptured
+
+
 This template should help get you started developing mobile applications with Vue3 and Typescript and Vant in Vite.
 
 ## Project setup

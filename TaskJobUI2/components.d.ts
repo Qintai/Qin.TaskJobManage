@@ -9,6 +9,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Detail: typeof import('./src/components/detail.vue')['default']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElForm: typeof import('element-plus/es')['ElForm']
@@ -20,7 +22,6 @@ declare module '@vue/runtime-core' {
     MyHello: typeof import('./src/components/MyHello.vue')['default']
     MyOk: typeof import('./src/components/MyOk.vue')['default']
     MyTable: typeof import('./src/components/MyTable.vue')['default']
-    Detail: typeof import('./src/components/detail.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

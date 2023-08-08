@@ -1,97 +1,190 @@
-<script lang="ts">
-import { ref, defineComponent, onMounted } from 'vue';
-import { ElButton } from 'element-plus'
-import { useRouter } from 'vue-router';
+<script lang="ts" setup>
+import { onMounted, ref, reactive } from 'vue';
+import { useRoute } from 'vue-router';
+import { request } from '../common/HttpApi.ts';
 
-const value3 = ref('')
-const defaultTime = ref<[Date, Date]>([
-  new Date(2000, 1, 1, 0, 0, 0),
-  new Date(2000, 2, 1, 23, 59, 59),
+const route = useRoute();
+const form = reactive({
+  taskName: '',
+  groupName: ''
+});
+const total = ref(10);
+const pageIndex = ref(1);
+const pageSize = ref(10);
+const fpage = ref(1);
+
+const tableData = ref([
+  {
+    taskName: '美团数据拉取Demo',
+    groupName: 'Tom_group',
+    status: 0,
+    cron: '2222',
+    des: '每日作业清洗 1点',
+    updateTime: '最后执行时间'
+  }
 ]);
+onMounted(() => {
+  console.info(route.query);
+  form.taskName = route.query?.taskName;
+  form.groupName = route.query?.groupName;
+  onSubmit();
+});
 
-const size1 = ref<'default' | 'large' | 'small'>('default')
+function switchT(status) {
+  if (status == 0) {
+    return "<span style='color:green;font-weight:bolder'>正常</span>";
+  } else if (status == 1) {
+    return "<span style='color:red;font-weight:bolder'>暂停</span>";
+  } else if (status == 2) {
+    return "<span style='color:red;font-weight:bolder'>完成</span>";
+  } else if (status == 3) {
+    return "<span style='color:yellow;font-weight:bolder'>异常</span>";
+  } else if (status == 4) {
+    return "<span style='color:blue;font-weight:bolder'>阻塞</span>";
+  } else if (status == 5) {
+    return "<span style='color:red;font-weight:bolder'>停止</span>";
+  } else return "<span style='color:red;font-weight:bolder'>不存在</span>";
+}
 
-const value1 = ref('')
-const value2 = ref('')
+// page-size 改变时触发
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`);
+  pageSize.value = val;
+  onSubmit();
+};
 
+// current-page 改变时触发
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
+  pageIndex.value = val;
+  onSubmit();
+};
 
-const router = useRouter();
+// 上一页
+const prevclick = (val: number) => {
+  console.log(`current page: ${val}`);
+  pageIndex.value = val;
+  onSubmit();
+};
+// 下一页
+const nextclick = (val: number) => {
+  console.log(`current page: ${val}`);
+  pageIndex.value = val;
+  onSubmit();
+};
 
-console.info('3333333333');
+function onSubmit() {
+  const parms = {
+    taskName: form.taskName,
+    groupName: form.groupName,
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value
+  };
+
+  request('/TaskJob-Detail', parms, function (res) {
+    if (res.status) {
+      tableData.value = res.data.TableData;
+      total.value = res.data.Count;
+    }
+  });
+}
+</script>
+
+<template>
+  <el-form :inline="true" :model="form" label-width="auto" style="">
+    <el-form-item>
+      <el-input v-model="form.taskName" placeholder="任务名" clearable />
+    </el-form-item>
+    <el-form-item>
+      <el-input v-model="form.groupName" placeholder="分组名" clearable />
+    </el-form-item>
+    <el-form-item>
+      <el-button type="warning" @click="onSubmit">查询</el-button>
+    </el-form-item>
+  </el-form>
+  <el-table
+    :data="tableData"
+    border
+    size="small"
+    highlight-current-row="true"
+    style="width: 100%"
+  >
+    <el-table-column prop="taskName" label="任务名" />
+    <el-table-column prop="groupName" label="分组名" />
+    <el-table-column prop="status" label="状态" #default="scope">
+      <span v-html="switchT(scope.row.status)"></span>
+    </el-table-column>
+    <el-table-column prop="cron" label="Cron" />
+    <el-table-column prop="des" label="描述" />
+    <el-table-column prop="updateTime" label="最后执行时间" />
+  </el-table>
+
+  <div class="example-pagination-block">
+    <el-pagination
+      layout="prev, pager, next"
+      :total="total"
+      v-model="fpage"
+      @prev-click="prevclick"
+      @next-click="nextclick"
+      @current-page="handleCurrentChange"
+      @page-size="handleSizeChange"
+    />
+  </div>
+</template>
+
+<!-- 
+<script lang="ts">
+import { useRouter } from 'vue-router';
+import { defineComponent } from 'vue';
+
+// const router = useRouter();
 
 //query
 // console.info(router.query.userId);
- 
+//
 //params
 // console.info(router.params.userId);
-
-onMounted(() => {
-  console.info('参数如下');
-  console.info(router.query.userId);
-});
-
-const shortcuts = [
-  {
-    text: 'Today',
-    value: new Date(),
-  },
-  {
-    text: 'Yesterday',
-    value: () => {
-      const date = new Date()
-      date.setTime(date.getTime() - 3600 * 1000 * 24)
-      return date
-    },
-  },
-  {
-    text: 'A week ago',
-    value: () => {
-      const date = new Date()
-      date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-      return date
-    },
-  },
-]
-
-const disabledDate = (time: Date) => {
-  return time.getTime() > Date.now()
-}
 
 const tableData = [
   {
     date: '2016-05-03',
     name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles'
   },
   {
     date: '2016-05-02',
     name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles'
   },
   {
     date: '2016-05-04',
     name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles'
   },
   {
     date: '2016-05-01',
     name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-]
+    address: 'No. 189, Grove St, Los Angeles'
+  }
+];
 
 export default defineComponent({
-  components: {
-  },
+  components: {},
   setup() {
     return {
       zIndex: 3000,
       size: 'small',
-      tableData
-    }
+      tableData,
+      route : useRouter()
+    };
   },
+  created: function () {
+    // let route = useRouter();
+    console.info(useRouter());
+    console.info(` query参数如下：${useRouter().query}`);
+    console.info(` 参数如下：${this.route.params}`);
+  }
 });
-
 </script>
 
 <template>
@@ -137,4 +230,5 @@ export default defineComponent({
   font-size: 14px;
   margin-bottom: 20px;
 }
-</style>
+</style> 
+-->
