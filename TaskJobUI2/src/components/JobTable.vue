@@ -2,7 +2,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { GetBaidu, request } from '../common/HttpApi.ts';
+import { request } from '../common/HttpApi';
 import { useDark, useToggle } from '@vueuse/core';
 
 const isDark = useDark();
@@ -11,12 +11,12 @@ const router = useRouter();
 const total = ref('0');
 const tableData = ref([
   {
-    taskName: '美团数据拉取Demo',
-    groupName: 'Tom_group',
+    taskName: 'Demo1',
+    groupName: 'Demo_group',
     status: 0,
-    cron: '2222',
-    des: '每日作业清洗 1点',
-    updateTime: '最后执行时间'
+    cron: '0 0 12 * * ?',
+    des: '每天中午12点触发',
+    updateTime: '2023-08-09 01:01:11'
   }
 ]);
 
@@ -28,10 +28,7 @@ const form = reactive({
   pagesize: ''
 });
 
-console.info(router);
-
 onMounted(() => {
-  console.info('启动了');
   onSubmit();
 });
 
@@ -41,7 +38,7 @@ function onSubmit() {
     groupName: form.groupName
   };
 
-  request('/TaskJob-Getjobs', parms, function (res) {
+  request('/TaskJob-Getjobs', parms, function (res: { status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
     if (res.status) {
       tableData.value = res.data;
       total.value = res.Count;
@@ -49,7 +46,7 @@ function onSubmit() {
   });
 }
 
-function switchT(status) {
+function switchT(status: number) {
   if (status == 0) {
     return "<span style='color:green;font-weight:bolder'>正常</span>";
   } else if (status == 1) {
@@ -66,32 +63,39 @@ function switchT(status) {
 }
 
 // 查看详情
-function DetailClick(item) {
+function DetailClick(item: { taskName: any; groupName: any; }) {
   router.push({
-    path: 'as',
+    path: 'jobdetail',
     query: { taskName: item.taskName, groupName: item.groupName }
   });
   // ElMessage.error('查看记录');
 }
 
-function tiggerAction(action, item) {
+function tiggerAction(action: string, item: { dynamicData: string; }) {
   item.dynamicData = form.dynamicData;
-  request('/TaskJob-' + action, item, function (res) {
+  request('/TaskJob-' + action, item, function (res: { status: any; msg: any; }) {
     if (res.status) {
       onSubmit(); // 刷新列表
       ElMessage({ message: res.msg, type: 'success' });
     }
   });
 }
+
+const isStartAndStop = ref(false);
+function StartAndStop(ischeck : boolean) {
+  if (isStartAndStop.value) {
+    tiggerAction('Startup', { dynamicData: '' });
+  }
+  else {
+    tiggerAction('Stop', { dynamicData: '' });
+  }
+}
+
 </script>
 
 <template>
   <div style="margin-bottom: 15px">
-    <a
-      class="el-button el-button--primary"
-      target="_blank"
-      href="https://cron.qqe2.com/"
-    >
+    <a class="el-button el-button--primary" target="_blank" href="https://cron.qqe2.com/">
       在线cron
     </a>
 
@@ -103,6 +107,11 @@ function tiggerAction(action, item) {
       <i inline-block align-middle i="dark:carbon-moon carbon-sun" />
       <span class="ml-2">{{ isDark ? 'Dark' : 'Light' }}</span>
     </el-button>
+    <el-button>
+      <el-switch v-model="isStartAndStop" class="ml-2" inline-prompt @change="StartAndStop"
+        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #4c4d4f" active-text="已开启调度" inactive-text="已关闭调度" />
+    </el-button>
+
   </div>
   <el-form :inline="true" :model="form" label-width="auto" style="">
     <el-form-item>
@@ -112,24 +121,13 @@ function tiggerAction(action, item) {
       <el-input v-model="form.groupName" placeholder="分组名" clearable />
     </el-form-item>
     <el-form-item>
-      <el-input
-        v-model="form.dynamicData"
-        placeholder="执行参数"
-        clearable
-        style="width: 400px"
-      />
+      <el-input v-model="form.dynamicData" placeholder="执行参数" clearable style="width: 400px" />
     </el-form-item>
     <el-form-item>
       <el-button type="warning" @click="onSubmit">查询</el-button>
     </el-form-item>
   </el-form>
-  <el-table
-    :data="tableData"
-    border
-    size="small"
-    highlight-current-row="true"
-    style="width: 100%"
-  >
+  <el-table :data="tableData" border size="small" highlight-current-row="true" style="width: 100%">
     <el-table-column prop="taskName" label="任务名" />
     <el-table-column prop="groupName" label="分组名" />
     <el-table-column prop="status" label="状态" #default="scope">
@@ -140,56 +138,36 @@ function tiggerAction(action, item) {
     <el-table-column prop="updateTime" label="最后执行时间" />
     <el-table-column fixed="right" label="操作" width="240">
       <template #default="scope">
-        <el-button
-          link
-          type="primary"
-          size="small"
-          @click="tiggerAction('Run', scope.row)"
-        >
+        <el-button link type="primary" size="small" @click="tiggerAction('Run', scope.row)">
           立即执行
         </el-button>
-        <el-button
-          link
-          type="primary"
-          size="small"
-          @click="tiggerAction('Pause', scope.row)"
-        >
+        <el-button link type="primary" size="small" @click="tiggerAction('Pause', scope.row)">
           暂停
         </el-button>
-        <el-button
-          link
-          type="primary"
-          size="small"
-          @click="tiggerAction('Start', scope.row)"
-        >
+        <el-button link type="primary" size="small" @click="tiggerAction('Start', scope.row)">
           开启
         </el-button>
       </template>
     </el-table-column>
     <el-table-column fixed="right" label="操作" width="220">
       <template #default="scope">
-        <el-button
+        <!-- <el-button
           link
           type="primary"
           size="small"
           @click="tiggerAction('remove', scope.row)"
         >
           删除
-        </el-button>
-        <el-button
-          link
-          type="primary"
-          size="small"
-          @click="DetailClick(scope.row)"
-        >
+        </el-button> -->
+        <el-button link type="primary" size="small" @click="DetailClick(scope.row)">
           记录
         </el-button>
       </template>
     </el-table-column>
   </el-table>
 
-  <router-link to="/ok">去时间组件界面看看</router-link>
+  <!-- <router-link to="/ok">去时间组件界面看看</router-link>
   <br />
-  <a href="/ok">时间组件界面</a>
+  <a href="/ok">时间组件界面</a> -->
 </template>
 

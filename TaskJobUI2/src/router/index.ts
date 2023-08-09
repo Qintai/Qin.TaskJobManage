@@ -17,20 +17,20 @@ import { createRouter, createWebHistory, RouteRecordRaw , createWebHashHistory} 
 
 export const constantRoutes: Array<RouteRecordRaw> = [
   {
-    path: '/as',
-    component: () => import('../components/MyHello.vue')
-  },
-  {
-    path: '/ok',
-    component: () => import('../components/MyOk.vue')
-  },
-  {
-    path: '/table',
+    path: '/mytable',
     component: () => import('../components/MyTable.vue')
   },
   {
-    path: '/detail',
-    component: () => import('../components/detail.vue')
+    path: '/helloworld',
+    component: () => import('../components/HelloWorld.vue')
+  },
+  {
+    path: '/jobtable',
+    component: () => import('../components/JobTable.vue')
+  },
+  {
+    path: '/jobdetail',
+    component: () => import('../components/JobDetail.vue')
   }
 ];
 

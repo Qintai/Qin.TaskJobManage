@@ -1,19 +1,7 @@
 // mouse.js
-import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
-export function GetBaidu() {
-  axios({
-    method: 'post',
-    url: 'www.baidu.com',
-    data: {
-      firstName: 'Fred',
-      lastName: 'Flintstone'
-    }
-  });
-}
-
-export function request(url, params, fun) {
+export function request(url: any, params: any, fun: (arg0: any) => any) {
   if (url.indexOf('Run') > -1) {
     params.DynamicData = encodeURI(params.dynamicData);
   } else {

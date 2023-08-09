@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue';
-import { useRoute } from 'vue-router';
-import { request } from '../common/HttpApi.ts';
+import { useRoute , useRouter} from 'vue-router';
+import { request } from '../common/HttpApi';
 
+const router = useRouter();
 const route = useRoute();
-const form = reactive({
+const form:any= reactive({
   taskName: '',
   groupName: ''
 });
@@ -15,12 +16,12 @@ const fpage = ref(1);
 
 const tableData = ref([
   {
-    taskName: '美团数据拉取Demo',
-    groupName: 'Tom_group',
+    taskName: 'Demo1',
+    groupName: 'Demo_group',
     status: 0,
-    cron: '2222',
-    des: '每日作业清洗 1点',
-    updateTime: '最后执行时间'
+    cron: '0 0 12 * * ?',
+    des: '每天中午12点触发',
+    updateTime: '2023-08-09 01:01:11'
   }
 ]);
 onMounted(() => {
@@ -30,7 +31,7 @@ onMounted(() => {
   onSubmit();
 });
 
-function switchT(status) {
+function switchT(status: number) {
   if (status == 0) {
     return "<span style='color:green;font-weight:bolder'>正常</span>";
   } else if (status == 1) {
@@ -73,6 +74,12 @@ const nextclick = (val: number) => {
   onSubmit();
 };
 
+function goBack(){
+  router.push({
+    path: 'jobtable'
+  });
+}
+
 function onSubmit() {
   const parms = {
     taskName: form.taskName,
@@ -81,7 +88,7 @@ function onSubmit() {
     pageSize: pageSize.value
   };
 
-  request('/TaskJob-Detail', parms, function (res) {
+  request('/TaskJob-Detail', parms, function (res: { status: any; data: { TableData: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: number; }; }) {
     if (res.status) {
       tableData.value = res.data.TableData;
       total.value = res.data.Count;
@@ -100,6 +107,9 @@ function onSubmit() {
     </el-form-item>
     <el-form-item>
       <el-button type="warning" @click="onSubmit">查询</el-button>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="success" @click="goBack">返回</el-button>
     </el-form-item>
   </el-form>
   <el-table
