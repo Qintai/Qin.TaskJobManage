@@ -1,6 +1,7 @@
 ﻿using Quartz;
 using Quartz.Impl.Matchers;
 using Quartz.Spi;
+using Quartz.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,13 @@ namespace Qin.TaskJobManage.Hander
         private readonly Dictionary<string, Func<string, Task<ResultMsg>>> _pairs = new Dictionary<string, Func<string, Task<ResultMsg>>>();
         private void Init()
         {
-            _pairs.Add("/taskjob-start", async (inputjson) => await Start(GetTaskModel(inputjson))); 
-            _pairs.Add("/taskjob-stop", async (parms) => await Stop()); 
+            _pairs.Add("/taskjob-start", async (inputjson) => await Start(GetTaskModel(inputjson)));
+            _pairs.Add("/taskjob-stop", async (parms) => await Stop());
             _pairs.Add("/taskjob-pause", async (parms) => await Pause(GetTaskModel(parms))); // suspend
             _pairs.Add("/taskjob-run", async (parms) => await Run(GetTaskModel(parms))); // Pause immediate execution
-            _pairs.Add("/taskjob-startup", async (parms) => await Startup()); 
-            _pairs.Add("/taskjob-getjobs", async (parms) => await GetJobs(GetTaskModel(parms))); // Get running list 
+            _pairs.Add("/taskjob-startup", async (parms) => await Startup());
+            _pairs.Add("/taskjob-getjobs", async (parms) => await GetJobs2(GetTaskModel(parms))); // Get running list 
+            _pairs.Add("/taskjob-remove", async (parms) => await Remove(GetTaskModel(parms))); // Get running list 
             _pairs.Add("/taskjob-detail", async (parms) =>
             {
                 int pageIndex = 0, pageSize = 0;
@@ -71,11 +73,11 @@ namespace Qin.TaskJobManage.Hander
         public async Task<ResultMsg> Start(TaskModel input)
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
-            (ITrigger trigger, _, string msg) = await Verification(scheduler, input.groupName, input.taskName);
-            if (msg != null)
+            (var jobkeyItrigger, var msg) = await GetJobKeyByTaskName(scheduler, input);
+            if (msg != "")
                 return ResultMsg.Fail(msg);
 
-            await scheduler.ResumeTrigger(trigger.Key);
+            await scheduler.ResumeTrigger(jobkeyItrigger.Value.Key);
             return ResultMsg.Ok("开启成功");
         }
 
@@ -91,11 +93,9 @@ namespace Qin.TaskJobManage.Hander
         public async Task<ResultMsg> Pause(TaskModel input)
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
-            (ITrigger trigger, _, string msg) = await Verification(scheduler, input.groupName, input.taskName);
-            if (msg != null)
-                return ResultMsg.Fail(msg);
-
-            await scheduler.PauseTrigger(trigger.Key);
+            (var jobkeyItrigger, var msg) = await GetJobKeyByTaskName(scheduler, input);
+            if (msg != "") return ResultMsg.Fail(msg);
+            await scheduler.PauseTrigger(jobkeyItrigger.Value.Key);
             return ResultMsg.Ok("暂停成功");
         }
 
@@ -120,8 +120,6 @@ namespace Qin.TaskJobManage.Hander
                        .Build();
                 try
                 {
-          
-
                     JobKey jobKey = new JobKey(item.taskName, item.groupName);
                     var v = await scheduler.CheckExists(jobKey);
                     if (v)
@@ -134,12 +132,46 @@ namespace Qin.TaskJobManage.Hander
                 catch (Exception e)
                 {
                     throw e;
-                } 
+                }
             }
             await scheduler.Start();
             Quartz.Logging.LogProvider.SetCurrentLogProvider(new WorkingLogProvider());
             ConsoleExcept.WriteLine("Task started successfully", ConsoleColor.Green);
             return ResultMsg.Ok("任务启动成功");
+        }
+
+        public async Task<ResultMsg> GetJobs2(TaskModel input)
+        {
+            IEnumerable<TaskModel> taskJobs = (IEnumerable<TaskModel>)_serviceProvider.GetService(typeof(IEnumerable<TaskModel>));
+            if (!input.taskName.IsNullOrWhiteSpace())
+                taskJobs = taskJobs.Where(a => a.taskName == input.taskName);
+            if (!input.groupName.IsNullOrWhiteSpace())
+                taskJobs = taskJobs.Where(a => a.groupName == input.groupName);
+
+            List<TaskModel> taskModels = new List<TaskModel>();
+            IScheduler scheduler = await _schedulerFactory.GetScheduler();
+            if (!scheduler.IsStarted)
+                return ResultMsg.Fail("未启动");
+
+            foreach (var item in taskJobs)
+            {
+                // var jobkey = new JobKey(item.taskName, item.groupName);
+                var jobKeys = await scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(item.groupName));
+                if (jobKeys.Count == 0) 
+                    continue;
+
+                (var jobkeyItrigger, var msg) = await GetJobKeyByTaskName(scheduler, item, jobKeys);
+                if (msg != "") return ResultMsg.Fail(msg);
+
+                TriggerState state = await scheduler.GetTriggerState(jobkeyItrigger.Value.Key);
+                DateTimeOffset? dateTimeOffset = jobkeyItrigger.Value.GetPreviousFireTimeUtc();
+                if (dateTimeOffset != null)
+                {
+                    item.SetLastRunTime(Convert.ToDateTime(dateTimeOffset.ToString()));
+                }
+                item.status = (int)state;
+            }
+            return ResultMsg.Ok("", taskJobs.ToList());
         }
 
         public async Task<ResultMsg> GetJobs(TaskModel input)
@@ -193,29 +225,45 @@ namespace Qin.TaskJobManage.Hander
         public async Task<ResultMsg> Run(TaskModel input)
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
-            (ITrigger trigger, JobKey jobKey, string msg) = await Verification(scheduler, input.groupName, input.taskName);
-            if (msg != null)
-                return ResultMsg.Fail(msg);
+            (var jobkeyItrigger, var msg) = await GetJobKeyByTaskName(scheduler, input);
+            if (msg != "") return ResultMsg.Fail(msg);
 
-            // IJobDetail jobdetail = await scheduler.GetJobDetail(jobKey);
             IDictionary<string, object> dat = new Dictionary<string, object>();
             dat.Add("parms", System.Web.HttpUtility.UrlDecode(input.DynamicData));
-            await scheduler.TriggerJob(jobKey, new JobDataMap(dat));
+            await scheduler.TriggerJob(jobkeyItrigger.Key, new JobDataMap(dat));
             return ResultMsg.Ok("立即执行成功");
         }
 
         // 删除
-        public async Task<ResultMsg> Remove(TaskModel model)
+        public async Task<ResultMsg> Remove(TaskModel input)
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
-            (ITrigger trigger, JobKey jobKey, string msg) = await Verification(scheduler, model.groupName, model.taskName);
-            if (msg != null)
-                return ResultMsg.Fail(msg);
-
-            await scheduler.PauseTrigger(trigger.Key);
-            await scheduler.UnscheduleJob(trigger.Key);// 移除触发器
-            await scheduler.DeleteJob(jobKey);
+            (var jobkeyItrigger, var msg) = await GetJobKeyByTaskName(scheduler, input);
+            if (msg != "") return ResultMsg.Fail(msg);
+            await scheduler.PauseTrigger(jobkeyItrigger.Value.Key);
+            await scheduler.UnscheduleJob(jobkeyItrigger.Value.Key);// 移除触发器
+            await scheduler.DeleteJob(jobkeyItrigger.Key);
             return ResultMsg.Ok("删除成功");
+        }
+
+        public async Task<(KeyValuePair<JobKey, ITrigger> A, string Fail)> GetJobKeyByTaskName(IScheduler scheduler, TaskModel item, IReadOnlyCollection<JobKey> list = null)
+        {
+            KeyValuePair<JobKey, ITrigger> res = new KeyValuePair<JobKey, ITrigger>();
+            if (list == null)
+                list = await scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(item.groupName));
+
+            foreach (JobKey jobkey in list)
+            {
+                var itriggers = await scheduler.GetTriggersOfJob(jobkey);
+                var itrigger = itriggers.FirstOrDefault(x => (x as Quartz.Impl.Triggers.CronTriggerImpl)?.Name == item.taskName);
+                if (itrigger != null) 
+                    res = new KeyValuePair<JobKey, ITrigger>(jobkey, itrigger); 
+            }
+
+            if (res.Key == null || res.Value == null) 
+                return (res, "不存在jobkey与itrigger"); 
+
+            return (res, string.Empty);
         }
 
         private async Task<(ITrigger, JobKey jobKey, string)> Verification(IScheduler scheduler, string groupName, string taskName)

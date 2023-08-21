@@ -14,11 +14,13 @@
 		<CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
 	</PropertyGroup>
 
-	<!--<ItemGroup>
+	<ItemGroup>
 	  <ProjectReference Include="..\TaskJobManage\Qin.TaskJobManage.csproj" />
-	</ItemGroup>-->
+	</ItemGroup>
 
+	<!--
 	<ItemGroup>
 	  <PackageReference Include="Qin.TaskJobManage" Version="1.0.6.3" />
 	</ItemGroup>
+	-->
 </Project>

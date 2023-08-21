@@ -75,7 +75,7 @@ namespace SampleWebApi
             }
 
             app.UseTaskJob();
-            lifetime.ApplicationStarted.Register(() => app.StartTaskJob());
+            //lifetime.ApplicationStarted.Register(() => app.StartTaskJob());
 
             lifetime.ApplicationStopped.Register(() =>
             {

@@ -40,6 +40,13 @@ function onSubmit() {
 
   request('/TaskJob-Getjobs', parms, function (res: { status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
     if (res.status) {
+      if(res.msg == "未启动"){
+        isStartAndStop.value = false;
+      }
+      else if(res.msg == "ok"){
+        isStartAndStop.value = true;
+      }
+  
       tableData.value = res.data;
       total.value = res.Count;
     }
@@ -74,7 +81,7 @@ function DetailClick(item: { taskName: any; groupName: any; }) {
 function tiggerAction(action: string, item: { dynamicData: string; }) {
   item.dynamicData = form.dynamicData;
   request('/TaskJob-' + action, item, function (res: { status: any; msg: any; }) {
-    if (res.status) {
+    if (res.status && action!= "Stop") {
       onSubmit(); // 刷新列表
       ElMessage({ message: res.msg, type: 'success' });
     }
@@ -113,7 +120,7 @@ function StartAndStop(ischeck : boolean) {
     </el-button>
 
   </div>
-  <el-form :inline="true" :model="form" label-width="auto" style="">
+  <el-form :inline="true" :model="form" label-width="auto" style="" v-show="isStartAndStop">
     <el-form-item>
       <el-input v-model="form.taskName" placeholder="任务名" clearable />
     </el-form-item>
@@ -127,7 +134,7 @@ function StartAndStop(ischeck : boolean) {
       <el-button type="warning" @click="onSubmit">查询</el-button>
     </el-form-item>
   </el-form>
-  <el-table :data="tableData" border size="small" highlight-current-row="true" style="width: 100%">
+  <el-table :data="tableData" border size="small" highlight-current-row="true" style="width: 100%" v-show="isStartAndStop">
     <el-table-column prop="taskName" label="任务名" />
     <el-table-column prop="groupName" label="分组名" />
     <el-table-column prop="status" label="状态" #default="scope">
