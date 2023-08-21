@@ -38,12 +38,12 @@ function onSubmit() {
     groupName: form.groupName
   };
 
-  request('/TaskJob-Getjobs', parms, function (res: { status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
+  request('/TaskJob-Getjobs', parms, function (res: {msg: string; status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
     if (res.status) {
       if(res.msg == "未启动"){
         isStartAndStop.value = false;
       }
-      else if(res.msg == "ok"){
+      else if(res.msg == "ok" || res.msg == ""){
         isStartAndStop.value = true;
       }
   
@@ -141,8 +141,8 @@ function StartAndStop(ischeck : boolean) {
       <span v-html="switchT(scope.row.status)"></span>
     </el-table-column>
     <el-table-column prop="cron" label="Cron" />
-    <el-table-column prop="des" label="描述" />
-    <el-table-column prop="updateTime" label="最后执行时间" />
+    <el-table-column prop="describe" label="描述" />
+    <el-table-column prop="lastRunTime" label="最后执行时间" />
     <el-table-column fixed="right" label="操作" width="240">
       <template #default="scope">
         <el-button link type="primary" size="small" @click="tiggerAction('Run', scope.row)">
