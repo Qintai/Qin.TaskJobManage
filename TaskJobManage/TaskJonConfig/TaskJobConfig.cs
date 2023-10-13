@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Qin.TaskJobManage.Hander;
+using Qin.TaskJobManage.view;
 using System;
 using System.Collections.Generic;
 
@@ -29,6 +30,11 @@ namespace Qin.TaskJobManage
         /// 自启动
         /// </summary>
         public bool SelfTurnOn { get; set; } = true;
+
+        /// <summary>
+        /// 前端静态文件
+        /// </summary>
+        public StaticFileConfig StaticFileList { get; set; }
 
         public TaskJobConfig AddJobExecutionLog<JobLog>() where JobLog : class, IJobExecutionLogs
         {

@@ -17,12 +17,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="view\TaskJobUI-static\*">
-			<pack>true</pack>
-		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
 		<EmbeddedResource Include="Qin.TaskJobManage_img.jpg">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -31,13 +25,23 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<EmbeddedResource Include="view\index.html" />
-		<EmbeddedResource Include="view\TaskJobUI-static\css\app.css" />
-		<EmbeddedResource Include="view\TaskJobUI-static\fonts\element-icons.535877f.woff" />
-		<EmbeddedResource Include="view\TaskJobUI-static\fonts\element-icons.732389d.ttf" />
-		<EmbeddedResource Include="view\TaskJobUI-static\js\app.js" />
-		<EmbeddedResource Include="view\TaskJobUI-static\js\manifest.js" />
-		<EmbeddedResource Include="view\TaskJobUI-static\js\vendor.js" />
+		<EmbeddedResource Include="view\StaticFileConfig.xml" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-3645df6a.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-a6832704.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-622a7dd6.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-9dbc4909.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-2e362149.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-b55cc30c.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-c267af4a.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-e1cc1afd.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-9b42429b.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-f0e6d8b5.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-c3cd3d51.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-d4e24ae5.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-0c2c5c71.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\favicon.ico" />
+		<EmbeddedResource Include="view\TaskJobUI2\flexible.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\index.html" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -58,5 +62,5 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
 		<PackageReference Include="Quartz" Version="3.7.0" />
 	</ItemGroup>
-
+	
 </Project>

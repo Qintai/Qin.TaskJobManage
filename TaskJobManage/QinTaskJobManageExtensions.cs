@@ -3,12 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Qin.TaskJobManage;
 using Qin.TaskJobManage.Hander;
+using Qin.TaskJobManage.view;
 using Quartz;
 using Quartz.Impl;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -67,7 +69,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton(TaskModeltype, item); //TaskJobManageHander -> Startup 批量扫描并执行
                 services.AddSingleton(item); // CostomJobFactory -> bundle.JobDetail.JobType 使用DI构造Job，不使用Quartz直接去new
             }
-      
+
+            configModel.StaticFileList = BuildStaticFileList();
             services.AddSingleton(configModel);
             return services;
         }
@@ -89,6 +92,18 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
                 return Enumerable.Empty<Type>().ToArray();
             }
+        }
+
+        private static Assembly CurrentAssembly => Assembly.GetExecutingAssembly();
+
+        public static StaticFileConfig BuildStaticFileList()
+        {
+            var mySerializer = new XmlSerializer(typeof(ItemGroup));
+            var staticfile_configpath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(a => a.EndsWith("StaticFileConfig.xml"));
+
+            using var steam = CurrentAssembly.GetManifestResourceStream(staticfile_configpath);
+            ItemGroup myObject = (ItemGroup)mySerializer.Deserialize(steam);
+            return new StaticFileConfig(myObject);
         }
     }
 }

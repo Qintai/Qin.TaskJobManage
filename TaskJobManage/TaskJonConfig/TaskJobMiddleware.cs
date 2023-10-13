@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Qin.TaskJobManage.Hander;
-using Quartz;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
 
 namespace Qin.TaskJobManage
@@ -39,32 +38,24 @@ namespace Qin.TaskJobManage
         public async Task Invoke(HttpContext httpContext)
         {
             var requestPath = httpContext.Request.Path.Value.Trim('/').ToLower();
-            bool ismainRoute = requestPath == _taskJonConfig.Route.Replace("/", "").ToLower();
 
-            if (httpContext.Request.Method.Equals("GET") && (ismainRoute || httpContext.Request.Path.Value.Contains("TaskJobUI-static")))
+            if (httpContext.Request.Method.Equals("GET"))
             {
-                var names = CurrentAssembly.GetManifestResourceNames();
-
-                // Find static files
-                var staticfile = httpContext.Request.Path.Value.Replace("/", ".").Replace(".TaskJobUI-static.", "");
-                var staticitem = names.FirstOrDefault(a =>
+                bool ismainRoute = requestPath == _taskJonConfig.Route.Replace("/", "").ToLower();
+                string staticFilePath = null;
+                if (ismainRoute)
                 {
-                    //var name = a.Replace($"{nameof(Qin.TaskJobManage)}.view.TaskJobUI_static.", "").Replace("/", ".");
-                    var name = a.Replace($"Qin.TaskJobManage.view.TaskJobUI_static.", "").Replace("/", ".");
-                    return name == staticfile;
-                });
-                // Find HTML
-                if (staticitem == null && ismainRoute)
-                {
-                    staticitem = names.FirstOrDefault(a =>
-                    {
-                        var name = a.Replace($"{nameof(Qin.TaskJobManage)}.view", "").Replace("/", ".");
-                        return name.IndexOf("html") > 0;
-                    });
+                    staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(".html"));
                 }
-                if (staticitem != null)
+                else if (requestPath.EndsWith(".js") || requestPath.EndsWith(".css") || requestPath.EndsWith(".ico"))
                 {
-                    var steam = CurrentAssembly.GetManifestResourceStream(staticitem); //Get the static file stream first
+                    staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(requestPath.Replace("/", "."), StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (staticFilePath != null)
+                {
+                    var steam = CurrentAssembly.GetManifestResourceStream(staticFilePath); //Get the static file stream first
+                    var staticfile = httpContext.Request.Path.Value.Replace("/", ".");
                     var format = Path.GetExtension(staticfile);
                     var contenttype = "";
                     if (format == ".css") contenttype = "text/css; charset=utf-8";
@@ -72,8 +63,8 @@ namespace Qin.TaskJobManage
                     else if (format == ".html") contenttype = "text/html; charset=utf-8";
                     httpContext.Response.ContentType = contenttype;
                     await steam.CopyToAsync(httpContext.Response.Body).ConfigureAwait(false);
+                    return;
                 }
-                return;
             }
 
             if (httpContext.Request.Headers.TryGetValue("taskjob", out _))
