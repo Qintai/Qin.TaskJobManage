@@ -1,6 +1,7 @@
 ﻿using Quartz;
 using Quartz.Impl.Triggers;
 using System;
+using System.Collections.Generic;
 
 namespace Qin.TaskJobManage
 {
@@ -48,7 +49,12 @@ namespace Qin.TaskJobManage
         /// <summary>
         /// 动态参数
         /// </summary>
-        public string DynamicData { get; set; }
+        public string dynamicData { get; set; }
+
+        /// <summary>
+        /// 立即执行选择的时间
+        /// </summary>
+        public List<string> runtimeStr { get; set; }
 
         /// <summary>
         /// 验证Cron表达式

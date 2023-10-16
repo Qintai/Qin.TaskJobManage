@@ -24,6 +24,7 @@ const form = reactive({
   taskName: '',
   groupName: '',
   dynamicData: '',
+  runtimeStr: null,
   pageindex: '',
   pagesize: ''
 });
@@ -38,15 +39,15 @@ function onSubmit() {
     groupName: form.groupName
   };
 
-  request('/TaskJob-Getjobs', parms, function (res: {msg: string; status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
+  request('/TaskJob-Getjobs', parms, function (res: { msg: string; status: any; data: { taskName: string; groupName: string; status: number; cron: string; des: string; updateTime: string; }[]; Count: string; }) {
     if (res.status) {
-      if(res.msg == "未启动"){
+      if (res.msg == "未启动") {
         isStartAndStop.value = false;
       }
-      else if(res.msg == "ok" || res.msg == ""){
+      else if (res.msg == "ok" || res.msg == "") {
         isStartAndStop.value = true;
       }
-  
+
       tableData.value = res.data;
       total.value = res.Count;
     }
@@ -78,10 +79,12 @@ function DetailClick(item: { taskName: any; groupName: any; }) {
   // ElMessage.error('查看记录');
 }
 
-function tiggerAction(action: string, item: { dynamicData: string; }) {
+function tiggerAction(action: string, item: { dynamicData: string; runtimeStr: any }) {
   item.dynamicData = form.dynamicData;
+  item.runtimeStr = form.runtimeStr;
+
   request('/TaskJob-' + action, item, function (res: { status: any; msg: any; }) {
-    if (res.status && action!= "Stop") {
+    if (res.status && action != "Stop") {
       onSubmit(); // 刷新列表
       ElMessage({ message: res.msg, type: 'success' });
     }
@@ -89,16 +92,31 @@ function tiggerAction(action: string, item: { dynamicData: string; }) {
 }
 
 const isStartAndStop = ref(false);
-function StartAndStop(ischeck : boolean) {
+function StartAndStop(ischeck: boolean) {
   if (isStartAndStop.value) {
-    tiggerAction('Startup', { dynamicData: '' });
+    tiggerAction('Startup', { dynamicData: '', runtimeStr: null });
   }
   else {
-    tiggerAction('Stop', { dynamicData: '' });
+    tiggerAction('Stop', { dynamicData: '', runtimeStr: null });
   }
 }
-
 </script>
+
+<style scoped>
+.demo-datetime-picker {
+  display: flex;
+  width: 90%;
+  padding: 0;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+.demo-datetime-picker .block {
+  padding: 15px 0;
+  text-align: center;
+}
+</style>
 
 <template>
   <div style="margin-bottom: 15px">
@@ -109,7 +127,7 @@ function StartAndStop(ischeck : boolean) {
     <!--
             main.ts：import 'element-plus/theme-chalk/dark/css-vars.css'
             https://github.com/vueuse/vueuse/blob/main/packages/core/useDark/demo.vue
-        -->
+    -->
     <el-button type="success" @click="toggleDark()" style="width: 80px">
       <i inline-block align-middle i="dark:carbon-moon carbon-sun" />
       <span class="ml-2">{{ isDark ? 'Dark' : 'Light' }}</span>
@@ -128,13 +146,28 @@ function StartAndStop(ischeck : boolean) {
       <el-input v-model="form.groupName" placeholder="分组名" clearable />
     </el-form-item>
     <el-form-item>
-      <el-input v-model="form.dynamicData" placeholder="执行参数" clearable style="width: 400px" />
-    </el-form-item>
-    <el-form-item>
       <el-button type="warning" @click="onSubmit">查询</el-button>
     </el-form-item>
+
+    <!-- 动态执行参数 Start-->
+    <el-form-item>
+      <el-input v-model="form.dynamicData" placeholder="执行参数" clearable style="width: 400px" />
+    </el-form-item>
+
+    <el-form-item>
+      <div class="demo-datetime-picker">
+        <div class="block">
+          <el-date-picker v-model="form.runtimeStr" type="datetimerange" start-placeholder="Start date"
+            end-placeholder="End date" format="YYYY-MM-DD HH:mm:ss" date-format="YYYY/MM/DD ddd" time-format="A hh:mm:ss"
+            el-date-picker value-format="YYYY-MM-DD HH:mm:ss" />
+        </div>
+      </div>
+    </el-form-item>
+    <!-- 动态执行参数 End-->
   </el-form>
-  <el-table :data="tableData" border size="small" highlight-current-row="true" style="width: 100%" v-show="isStartAndStop">
+
+  <el-table :data="tableData" border size="small" highlight-current-row="true" style="width: 100%"
+    v-show="isStartAndStop">
     <el-table-column prop="taskName" label="任务名" />
     <el-table-column prop="groupName" label="分组名" />
     <el-table-column prop="status" label="状态" #default="scope">

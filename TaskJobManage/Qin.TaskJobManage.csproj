@@ -17,38 +17,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Qin.TaskJobManage_img.jpg">
+		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</EmbeddedResource>
-	</ItemGroup>
-	
-	<ItemGroup>
-		<EmbeddedResource Include="view\StaticFileConfig.xml" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-3645df6a.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-a6832704.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-622a7dd6.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-9dbc4909.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-2e362149.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-b55cc30c.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-c267af4a.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-e1cc1afd.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-9b42429b.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-f0e6d8b5.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-c3cd3d51.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-d4e24ae5.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-0c2c5c71.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\favicon.ico" />
-		<EmbeddedResource Include="view\TaskJobUI2\flexible.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\index.html" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,6 +33,34 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
 		<PackageReference Include="Quartz" Version="3.7.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="Qin.TaskJobManage_img.jpg">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="view\StaticFileConfig.xml" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-38702d20.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-a6832704.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-1c1a943c.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-9dbc4909.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-8c86618b.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-1cee2831.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-2c5ca1bf.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-b55cc30c.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-5ab068c4.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-9b42429b.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-b9152869.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-babc87bf.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-bd140bb7.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\favicon.ico" />
+		<EmbeddedResource Include="view\TaskJobUI2\flexible.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\index.html" />
 	</ItemGroup>
 	
 </Project>

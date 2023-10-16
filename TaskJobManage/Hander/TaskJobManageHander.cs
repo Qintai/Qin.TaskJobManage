@@ -229,7 +229,15 @@ namespace Qin.TaskJobManage.Hander
             if (msg != "") return ResultMsg.Fail(msg);
 
             IDictionary<string, object> dat = new Dictionary<string, object>();
-            dat.Add("parms", System.Web.HttpUtility.UrlDecode(input.DynamicData));
+            if (!string.IsNullOrWhiteSpace(input.dynamicData))
+                dat.Add("parms", System.Web.HttpUtility.UrlDecode(input.dynamicData));
+            
+            if (input.runtimeStr != null && input.runtimeStr.Count > 1)
+            {
+                dat.Add("run_stime", input.runtimeStr[0]);
+                dat.Add("run_etime", input.runtimeStr[1]);
+            }
+
             await scheduler.TriggerJob(jobkeyItrigger.Key, new JobDataMap(dat));
             return ResultMsg.Ok("立即执行成功");
         }

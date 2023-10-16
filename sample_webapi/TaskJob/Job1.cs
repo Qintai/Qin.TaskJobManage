@@ -37,9 +37,14 @@ namespace SampleWebApi
             _logger.LogInformation("Job1 Run");
 
             JobDataMap dataMap = context.JobDetail.JobDataMap;
-            Console.WriteLine(dataMap.GetString("parms") ?? "");
+
             string json = context.Trigger.JobDataMap.GetString("parms") ?? "";
-            Console.WriteLine("动态传参数是：" + json);
+            string run_stime = context.Trigger.JobDataMap.GetString("run_stime");
+            string run_etime = context.Trigger.JobDataMap.GetString("run_etime");
+
+            ConsoleExcept.WriteLine($"动态传参数[parms]是：{json ?? ""}", ConsoleColor.Blue);
+            ConsoleExcept.WriteLine($"动态传参数[run_stime]是：{run_stime ?? ""} ", ConsoleColor.Blue);
+            ConsoleExcept.WriteLine($"动态传参数[run_etime]是：{run_etime ?? ""} ", ConsoleColor.Blue);
 
             return Task.Run(() =>
             {

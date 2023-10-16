@@ -3,9 +3,9 @@ import axios from 'axios';
 
 export function request(url: any, params: any, fun: (arg0: any) => any) {
   if (url.indexOf('Run') > -1) {
-    params.DynamicData = encodeURI(params.dynamicData);
+    params.dynamicData = encodeURI(params.dynamicData);
   } else {
-    params.DynamicData = '';
+    params.dynamicData = '';
   }
   axios({
     method: 'post',
@@ -16,7 +16,7 @@ export function request(url: any, params: any, fun: (arg0: any) => any) {
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',
       taskjob: 'now',
-      dynamicData: params.DynamicData
+      dynamicData: params.dynamicData
     }
   })
     .then(function (response) {
