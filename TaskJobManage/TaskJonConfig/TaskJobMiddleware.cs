@@ -39,17 +39,27 @@ namespace Qin.TaskJobManage
         {
             var requestPath = httpContext.Request.Path.Value.Trim('/').ToLower();
 
-            if (httpContext.Request.Method.Equals("GET"))
+            if (httpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 bool ismainRoute = requestPath == _taskJonConfig.Route.Replace("/", "").ToLower();
                 string staticFilePath = null;
                 if (ismainRoute)
                 {
-                    staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(".html"));
+                    var fg = _taskJonConfig.StaticFileList.StaticFile.EmbeddedResource.Any(a =>
+                         a.Include.Contains(requestPath.Replace("/", @"\"), StringComparison.OrdinalIgnoreCase));
+                    if (fg)
+                    {
+                        staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(".html"));
+                    }
                 }
                 else if (requestPath.EndsWith(".js") || requestPath.EndsWith(".css") || requestPath.EndsWith(".ico"))
                 {
-                    staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(requestPath.Replace("/", "."), StringComparison.OrdinalIgnoreCase));
+                    var fg = _taskJonConfig.StaticFileList.StaticFile.EmbeddedResource.Any(a =>
+                        a.Include.Contains(requestPath.Replace("/", @"\"), StringComparison.OrdinalIgnoreCase));
+                    if (fg)
+                    {
+                        staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(requestPath.Replace("/", "."), StringComparison.OrdinalIgnoreCase));
+                    }
                 }
 
                 if (staticFilePath != null)
