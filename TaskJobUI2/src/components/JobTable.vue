@@ -105,7 +105,7 @@ function StartAndStop(ischeck: boolean) {
 <style scoped>
 .demo-datetime-picker {
   display: flex;
-  width: 90%;
+  width: 100%;
   padding: 0;
   flex-wrap: wrap;
   justify-content: space-around;

@@ -8,6 +8,7 @@ import router from './router/index';
 
 // 导入暗黑模式的样式
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import './styles/dark.css'
 
 // build 之后 消息弹窗的样式丢失了。所以手动引入样式 https://juejin.cn/post/7114295680339804173
 import 'element-plus/theme-chalk/src/message-box.scss'

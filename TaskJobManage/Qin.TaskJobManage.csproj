@@ -15,7 +15,7 @@
 		<PackageReleaseNotes>优化中间件2</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<None Include="..\README.md">
 			<Pack>True</Pack>
@@ -45,19 +45,19 @@
 	
 	<ItemGroup>
 		<EmbeddedResource Include="view\StaticFileConfig.xml" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-38702d20.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-0ff493f1.js" />
 		<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-a6832704.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-1c1a943c.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-799c9cff.js" />
 		<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-9dbc4909.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-8c86618b.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-1cee2831.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-2c5ca1bf.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\index-b55cc30c.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-5ab068c4.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-fde73560.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-2a58bbbd.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-45b66a61.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\index-6dc58469.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-1ea9d10c.js" />
 		<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-9b42429b.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-b9152869.css" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-babc87bf.js" />
-		<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-bd140bb7.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-1f55e0e2.js" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-bc88acf5.css" />
+		<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-d008c0bb.js" />
 		<EmbeddedResource Include="view\TaskJobUI2\favicon.ico" />
 		<EmbeddedResource Include="view\TaskJobUI2\flexible.js" />
 		<EmbeddedResource Include="view\TaskJobUI2\index.html" />
