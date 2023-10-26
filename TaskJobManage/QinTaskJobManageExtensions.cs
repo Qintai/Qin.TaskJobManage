@@ -70,6 +70,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton(item); // CostomJobFactory -> bundle.JobDetail.JobType 使用DI构造Job，不使用Quartz直接去new
             }
 
+            if (!configModel.Route.StartsWith("/"))
+                configModel.Route = $"/{configModel.Route}";
+
             configModel.StaticFileList = BuildStaticFileList();
             services.AddSingleton(configModel);
             return services;

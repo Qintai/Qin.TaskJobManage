@@ -57,7 +57,8 @@ namespace SampleWebApi
             services.AddSession().AddMemoryCache();
 
             services.AddTaskJob(options => 
-            { 
+            {
+                options.Route = "/TaskJobUI";
                 options.AddJobExecutionLog<JobExecutionLog>();
             }); 
         }

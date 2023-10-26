@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted,onUnmounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { request } from '../common/HttpApi';
@@ -31,6 +31,20 @@ const form = reactive({
 
 onMounted(() => {
   onSubmit();
+  //绑定监听事件
+	window.addEventListener('keydown', keyDown)
+});
+
+//点击回车键登录
+const keyDown = (e:any) => {
+	if (e.keyCode == 13 || e.keyCode == 100) {
+		onSubmit()
+	}
+}
+
+onUnmounted(() => {
+	//销毁事件
+	window.removeEventListener('keydown', keyDown, false)
 });
 
 function onSubmit() {

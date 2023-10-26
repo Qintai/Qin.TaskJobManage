@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, onUnmounted, ref, reactive } from 'vue';
 import { useRoute , useRouter} from 'vue-router';
 import { request } from '../common/HttpApi';
 
@@ -29,6 +29,8 @@ onMounted(() => {
   form.taskName = route.query?.taskName;
   form.groupName = route.query?.groupName;
   onSubmit();
+    //绑定监听事件
+	window.addEventListener('keydown', keyDown)
 });
 
 function switchT(status: number) {
@@ -80,6 +82,19 @@ function goBack(){
   });
 }
 
+//点击回车键登录
+const keyDown = (e:any) => {
+	if (e.keyCode == 13 || e.keyCode == 100) {
+		onSubmit()
+	}
+}
+
+onUnmounted(() => {
+	//销毁事件
+	window.removeEventListener('keydown', keyDown, false)
+});
+
+
 function onSubmit() {
   const parms = {
     taskName: form.taskName,
@@ -125,8 +140,8 @@ function onSubmit() {
       <span v-html="switchT(scope.row.status)"></span>
     </el-table-column>
     <el-table-column prop="cron" label="Cron" />
-    <el-table-column prop="des" label="描述" />
-    <el-table-column prop="updateTime" label="最后执行时间" />
+    <el-table-column prop="describe" label="描述" />
+    <el-table-column prop="lastRunTime" label="最后执行时间" />
   </el-table>
 
   <div class="example-pagination-block">

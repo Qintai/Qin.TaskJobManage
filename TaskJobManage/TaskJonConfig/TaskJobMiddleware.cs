@@ -41,16 +41,14 @@ namespace Qin.TaskJobManage
 
             if (httpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                bool ismainRoute = requestPath == _taskJonConfig.Route.Replace("/", "").ToLower();
+                bool ismainRoute = false;
+                if (string.Equals(_taskJonConfig.Route, httpContext.Request.Path.Value, StringComparison.OrdinalIgnoreCase))
+                    ismainRoute = true;
+
                 string staticFilePath = null;
                 if (ismainRoute)
                 {
-                    var fg = _taskJonConfig.StaticFileList.StaticFile.EmbeddedResource.Any(a =>
-                         a.Include.Contains(requestPath.Replace("/", @"\"), StringComparison.OrdinalIgnoreCase));
-                    if (fg)
-                    {
-                        staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(".html"));
-                    }
+                    staticFilePath = CurrentAssembly.GetManifestResourceNames().FirstOrDefault(p => p.EndsWith(".html"));
                 }
                 else if (requestPath.EndsWith(".js") || requestPath.EndsWith(".css") || requestPath.EndsWith(".ico"))
                 {
