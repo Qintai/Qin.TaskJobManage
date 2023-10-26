@@ -1,18 +1,18 @@
 ﻿<ItemGroup>
 	<EmbeddedResource Include="view\StaticFileConfig.xml" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-9cb3b24d.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-86f82e64.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\assets\el-input-a6832704.css" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-16f35196.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-9dbc4909.css" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-4ea92b12.js" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\index-58c236f6.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\HelloWorld-b3a49796.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\HttpApi-79dd8d03.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\index-3d850a4c.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\assets\index-6dc58469.css" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\index-8b364493.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\index-d5636c75.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-46d98ac3.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-9b42429b.css" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\JobDetail-b5dfe6b9.js" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-e9902e79.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-7150f5ee.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\assets\JobTable-f62dd6d2.css" />
-	<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-0e4d4b1d.js" />
+	<EmbeddedResource Include="view\TaskJobUI2\assets\MyTable-a184b2d7.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\favicon.ico" />
 	<EmbeddedResource Include="view\TaskJobUI2\flexible.js" />
 	<EmbeddedResource Include="view\TaskJobUI2\index.html" />

@@ -58,7 +58,7 @@ const handleSizeChange = (val: number) => {
 
 // current-page 改变时触发
 const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+  // console.log(`current page: ${val}`);
   pageIndex.value = val;
   onSubmit();
 };
@@ -153,6 +153,7 @@ function onSubmit() {
       @next-click="nextclick"
       @current-page="handleCurrentChange"
       @page-size="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
   </div>
 </template>
